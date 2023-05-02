@@ -1,0 +1,11 @@
+.folder {
+  font-size: medium;
+  height: 28vh;
+  width: 95vw;
+  overflow: auto;
+  border-style: solid;
+  border-width: medium;
+
+}
+
+.video-player {}
