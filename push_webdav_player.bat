@@ -3,5 +3,5 @@ cd %~dp0
 set /p c=请输入commit:
 git add .
 git commit -m "%c%"
-git push https://hxse:%hxse_github_token%@github.com/hxse/webdav_player.git
+git push https://hxse:%hxse_github_token%@github.com/hxse/webdav-player.git
 pause
