@@ -8,4 +8,23 @@
 
 }
 
-.video-player {}
+
+.float {
+  position: absolute;
+  top: -35px;
+  /* height: 90px;
+  width: 40px;
+  bottom: 90px;
+  right: 50px; */
+  /* background: #b4d145; */
+  /* top: 500px; */
+}
+
+.float-button {
+  /* height: 30px; */
+  font-size: large;
+}
+
+.float-button:active {
+  background: red;
+}

@@ -188,16 +188,18 @@ export function VideoReactPlayer({ url, setUrl, tree, setTree, tree2, setTree2, 
                 <source src={url} />
 
                 <ControlBar autohide={false}>
-                    <button id="prev" onClick={() => onClick({ mode: 'prev', tree, tree2, videoIdx, setIdx, setUrl, setVideoIdx, setColorIdx, ref, setAutoClick })}>prev{videoIdx == null || videoCount == null ? '' : videoIdx}</button>
-                    <button id="next" onClick={() => onClick({ mode: 'next', tree, tree2, videoIdx, setIdx, setUrl, setVideoIdx, setColorIdx, ref, setAutoClick })}>next{videoIdx == null || videoCount == null ? '' : videoCount - videoIdx - 1}</button>
-                    <button id="like" onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'likeVideo' })}>like</button>
-                    <button id="down" onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'downVideo' })}>down</button>
-                    <button id="switchVideo" onClick={() => onSwitchUser({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick, mode: 'video' })}>switchVideo</button>
-                    <button id="addUser" onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'addUser' })}>addUser</button>
-                    <button id="removeUser" onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'removeUser' })}>removeUser</button>
-                    <button id="switchUser" onClick={() => onSwitchUser({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick, mode: 'user' })}>switchUser</button>
-                    <button id="backWard" onClick={() => onBackWard({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick })}>backWard</button>
-                    <button id="refresh" onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'refresh', setTree, setTree2 })}>refresh</button>
+                    <div className="float" >
+                        <button id="prev" className='float-button' onClick={() => onClick({ mode: 'prev', tree, tree2, videoIdx, setIdx, setUrl, setVideoIdx, setColorIdx, ref, setAutoClick })}>prev{videoIdx == null || videoCount == null ? '' : videoIdx}</button>
+                        <button id="next" className='float-button' onClick={() => onClick({ mode: 'next', tree, tree2, videoIdx, setIdx, setUrl, setVideoIdx, setColorIdx, ref, setAutoClick })}>next{videoIdx == null || videoCount == null ? '' : videoCount - videoIdx - 1}</button>
+                        <button id="like" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'likeVideo' })}>like</button>
+                        <button id="down" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'downVideo' })}>down</button>
+                        <button id="switchVideo" className='float-button' onClick={() => onSwitchUser({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick, mode: 'video' })}>switchVideo</button>
+                        <button id="addUser" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'addUser' })}>addUser</button>
+                        <button id="removeUser" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'removeUser' })}>removeUser</button>
+                        <button id="switchUser" className='float-button' onClick={() => onSwitchUser({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick, mode: 'user' })}>switchUser</button>
+                        <button id="backWard" className='float-button' onClick={() => onBackWard({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick })}>backWard</button>
+                        <button id="refresh" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'refresh', setTree, setTree2 })}>refresh</button>
+                    </div>
                 </ControlBar>
 
                 <Shortcut clickable={false} dblclickable={false} shortcuts={shortcuts} />
