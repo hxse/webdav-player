@@ -104,7 +104,9 @@ function App() {
   const [videoCount, setVideoCount] = useState<number | null>(null)
   const [url, setUrl] = useState<string>('')
   const [tree, setTree] = useState<object>({})
+  const [tree2, setTree2] = useState<object | null>(null)
   const [colorIdx, setColorIdx] = useState<number | null>(null)
+  const [autoClick, setAutoClick] = useState<number | null>(null)
   useEffect(() => {
     async function run_tree() {
       const tree = await get_children('/')
@@ -117,15 +119,14 @@ function App() {
   return (
     <div>
       <div>
-        <div>
+        <div style={{ "whiteSpace": "nowrap" }}>
           {path?.split(',').map((i, idx) =>
             <a key={idx} href={changeURLArg(window.location.href, 'num', idx)}>
               ➹{i}&nbsp;
             </a>
           )}
         </div >
-        <div>
-
+        <div style={{ "whiteSpace": "nowrap" }}>
           idx: {idx} &nbsp;
           videoIdx: {videoIdx} &nbsp;
           count: {count} &nbsp;
@@ -133,14 +134,14 @@ function App() {
         </div>
       </div >
       <div>
-        <Folder tree={tree} setTree={setTree} setUrl={setUrl} setIdx={setIdx} setVideoIdx={setVideoIdx} colorIdx={colorIdx} setColorIdx={setColorIdx} setCount={setCount} setVideoCount={setVideoCount} />
+        <Folder tree={tree} setTree={setTree} tree2={tree2} setTree2={setTree2} setUrl={setUrl} setIdx={setIdx} setVideoIdx={setVideoIdx} colorIdx={colorIdx} setColorIdx={setColorIdx} setCount={setCount} setVideoCount={setVideoCount} autoClick={autoClick} setAutoClick={setAutoClick} />
       </div>
       <br />
       {
         !url ? undefined : url == 'error' ? <h1>'play video error'</h1> :
           <div
           >
-            <VideoReactPlayer url={url} setUrl={setUrl} tree={tree} setIdx={setIdx} setVideoIdx={setVideoIdx} videoIdx={videoIdx} setColorIdx={setColorIdx} count={count} videoCount={videoCount} />
+            <VideoReactPlayer url={url} setUrl={setUrl} tree={tree} setTree={setTree} tree2={tree2} setTree2={setTree2} setIdx={setIdx} setVideoIdx={setVideoIdx} videoIdx={videoIdx} setColorIdx={setColorIdx} count={count} videoCount={videoCount} autoClick={autoClick} setAutoClick={setAutoClick} />
           </div>
       }
     </div >

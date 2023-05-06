@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { get_tree, get_children, client } from './App'
 import { formatTranslation } from './App'
 
@@ -18,11 +19,12 @@ function merger_path(path, relativePath, mode = 'file') {
         }
         n += 1
     }
+
     let res = [...p.slice(0, mode == 'file' ? -n - 1 : -n), ...r.slice(n, r.length)]
-    return res.join('/')
+    return res.join('/').replace('/./', '/')
 }
 
-async function get_m3u8_tree(path: string, blacklist: Array<string> = ['System Volume Information']) {
+export async function get_m3u8_tree(path: string, blacklist: Array<string> = ['System Volume Information']) {
     const text: string = await client.getFileContents(path, { format: "text" });
     let children: any = text.split('\n').filter((i) => i != '')
     children = children.map((i) => ({ 'filename': merger_path(path, i.trim(), 'file'), 'type': 'file' }))
@@ -35,7 +37,7 @@ async function get_m3u8_tree(path: string, blacklist: Array<string> = ['System V
 }
 
 
-async function onclick(path: string, type: string, setTree: any, setUrl: any, setIdx: any, setVideoIdx: any, idx: number | null, setColorIdx: any, vdx: number | null, setCount: any, setVideoCount: any) {
+async function onclick(path: string, type: string, setTree: any, setUrl: any, setIdx: any, setVideoIdx: any, idx: number | null, setColorIdx: any, vdx: number | null, setCount: any, setVideoCount: any, setTree2: any) {
     if (type == 'root') {
         setVideoIdx(null)
         setColorIdx(null)
@@ -71,25 +73,52 @@ async function onclick(path: string, type: string, setTree: any, setUrl: any, se
     setIdx(idx)
     console.log('folder click')
 }
-export function Folder({ tree, setTree, setUrl, setIdx, setVideoIdx, colorIdx, setColorIdx, setCount, setVideoCount }: any) {
-    console.log('folder')
-    const _ = tree?.name?.split('/')
-    const parentPath = (_?.slice(0, _?.length - 1))?.join('/')
-    return <div className='folder'>
-        <div onClick={() => onclick(parentPath, 'directory', setTree, setUrl, setIdx, setVideoIdx, null, setColorIdx, null, setCount, setVideoCount)}>
-            {tree.name || '/'}
-        </div>
-        {tree?.children?.map((i: any, idx: number) => (
-            <div key={idx} onClick={() => onclick(i.name, i.type, setTree, setUrl, setIdx, setVideoIdx, idx, setColorIdx, i.vdx, setCount, setVideoCount)}
-                style={{
-                    "backgroundColor": idx == colorIdx ? "rgba(228, 228, 236, 0.5)" : "",
-                    // "boxShadow": "0 0 5px #333"
-                }}
-            >
-                {i?.name?.split('/')?.at(-1)}
+function Create_tree({ tree, setTree, setUrl, setIdx, setVideoIdx, setColorIdx, setCount, setVideoCount, colorIdx, myref }: any) {
+    return tree?.children?.map((i: any, idx: number) => (
+        <div key={idx} ref={(r) => myref.current[idx] = r} onClick={() => onclick(i.name, i.type, setTree, setUrl, setIdx, setVideoIdx, idx, setColorIdx, i.vdx, setCount, setVideoCount)}
+            style={{
+                "backgroundColor": idx == colorIdx ? "rgba(228, 228, 236, 0.5)" : "",
+                // "boxShadow": "0 0 5px #333"
+            }}
+        >
+            {i?.name?.split('/')?.at(-1)}
 
-            </div>
-        ))
+        </div>
+    ))
+}
+export function Folder({ tree, setTree, tree2, setTree2, setUrl, setIdx, setVideoIdx, colorIdx, setColorIdx, setCount, setVideoCount, autoClick, setAutoClick }: any) {
+    const ref = useRef([]);
+    console.log('folder')
+    const _ = tree2 == null ? tree?.name?.split('/') : tree2?.name?.split('/')
+    const parentPath = (_?.slice(0, _?.length - 1))?.join('/')
+    useEffect(() => {
+        if (autoClick != null) {
+            ref.current?.[autoClick].click()
+            ref.current?.[autoClick].scrollIntoViewIfNeeded({ behavior: 'instant' });
+        }
+    }, [autoClick])
+
+    return <div className='folder'>
+
+        {tree2 == null ?
+            (
+                <div>
+                    <div onClick={() => onclick(parentPath, 'directory', setTree, setUrl, setIdx, setVideoIdx, null, setColorIdx, null, setCount, setVideoCount, setTree2)}>
+                        {tree.name || '/'}
+                    </div>
+                    <Create_tree tree={tree} setTree={setTree} setUrl={setUrl} setIdx={setIdx} setVideoIdx={setVideoIdx} setColorIdx={setColorIdx} setCount={setCount} setVideoCount={setVideoCount} colorIdx={colorIdx} myref={ref} ></Create_tree>
+                </div>
+            )
+            :
+            (
+                <div>
+                    {/* <div onClick={() => onclick(parentPath, 'directory', setTree, setUrl, setIdx, setVideoIdx, null, setColorIdx, null, setCount, setVideoCount, setTree2)}>
+                    {tree2.name || '/'}
+                    </div> */}
+                    <div>children page...{tree2.name.split('/').at(-1)}</div>
+                    <Create_tree tree={tree2} setTree={setTree} setUrl={setUrl} setIdx={setIdx} setVideoIdx={setVideoIdx} setColorIdx={setColorIdx} setCount={setCount} setVideoCount={setVideoCount} colorIdx={colorIdx} myref={ref} ></Create_tree>
+                </div>
+            )
         }
     </div >
 }
