@@ -9,19 +9,17 @@ export function create_url(path: string) {
     return downloadLink
 }
 
-function merger_path(path, relativePath, mode = 'file') {
-    let p = path.split('/')
-    let r = relativePath.split('\\')
-    let n = 0
-    for (let i of relativePath.split('\\')) {
-        if (i != '..') {
-            break
-        }
-        n += 1
+function merger_path(path: string, relativePath: string, mode = 'file') {
+    let p = path.indexOf('/') == -1 ? path.split('\\') : path.split('/')
+    let r = relativePath.indexOf('/') == -1 ? relativePath.split('\\') : relativePath.split('/')
+    let res = [...p.slice(0, p.length - 1), ...r]
+    if (r[0] == '..') {
+        res = [...p.slice(0, mode == 'file' ? p.length - 2 : p.length - 1), ...r.slice(1, r.length)]
     }
-
-    let res = [...p.slice(0, mode == 'file' ? -n - 1 : -n), ...r.slice(n, r.length)]
-    return res.join('/').replace('/./', '/')
+    if (r[0] == '.') {
+        res = [...p.slice(0, p.length - 1), ...r.slice(1, r.length)]
+    }
+    return res.join('/')
 }
 
 export async function get_m3u8_tree(path: string, blacklist: Array<string> = ['System Volume Information']) {

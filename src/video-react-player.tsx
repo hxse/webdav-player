@@ -7,7 +7,7 @@ import { playlistConfig } from "./config"
 import { get_children, client } from './App';
 import { memo } from 'react'
 import { get_m3u8_tree } from './folder';
-import { data_files_act } from './act';
+import { data_files_act, user_playlist_act } from './act';
 
 //todo video-react不维护了, 所以用这个重构  https://github.com/CookPete/react-player
 
@@ -78,10 +78,16 @@ async function onAddOrRemoveUser({ tree, tree2, videoIdx, mode, setTree, setTree
     let item = number == null ? null : tree.children[number]
     if (item?.type == 'file') {
         const regex_data_files = item.name.match(/(\/91porn)\/data_files\/(.*)\/(.*mp4)/)
+        const regex_data_files2 = item.name.match(/(\/91porn)\/user_playlist\/(.*m3u8)/)
         switch (true) {
             case regex_data_files != null:
                 //todo 这个地方很麻烦, 还是用配置文件去定义吧
                 data_files_act({ regex_data_files: regex_data_files, mode: mode, item, tree, setTree })
+                break
+            case regex_data_files2 != null:
+                //这个没有必要, 应该根本用不上
+                debugger
+                user_playlist_act({ regex_data_files: regex_data_files2, mode: mode, item, tree, setTree })
                 break
             default:
                 break;

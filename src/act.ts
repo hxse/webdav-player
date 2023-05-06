@@ -67,3 +67,26 @@ export async function data_files_act({ regex_data_files, mode, item, tree, setTr
             break
     }
 }
+
+function merger_name(name: string) {
+    return name.replace(/(\/.+?)\.\.\/(.+)/, ($0, $1, $2) => $1.replace(/(.+\/)(.+)/, '$1') + $2)
+}
+
+export async function user_playlist_act({ regex_data_files, mode, item, tree, setTree }: any) {
+    const videoDataPath = regex_data_files[1] + '/' + 'data_files' + '/' + regex_data_files[2].slice(0, regex_data_files[2] - 5)
+    const videoPlaylistPath = regex_data_files[0]
+    // let downloadLink = client.getFileDownloadLink(p);
+    switch (mode) {
+        case 'addUser':
+            async function get_dir() {
+                const dir: any = await client.getDirectoryContents(videoDataPath);
+                const res = dir.map((i: any) => i.filename.replace('/91porn', '..') + '\n').join('\n')
+                return res
+            }
+            const res = await get_dir()
+            // const text = await client.getFileContents(userPlaylistPath, { format: "text" });
+            // await client.putFileContents(userPlaylistPath, cleanData(text, res));
+
+            break
+    }
+}
