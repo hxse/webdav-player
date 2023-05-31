@@ -24,6 +24,35 @@ function merger_path(path: string, relativePath: string, mode = 'file') {
     return res.join('/')
 }
 
+async function get_file(path: string): Promise<string> {
+    // m3u8不刷新的话, 就刷新浏览器缓存, 没什么好办法
+    // https://github.com/whatwg/fetch/issues/26 fetch不支持带@用户名密码的url,所以要写到header里面,或者直接清除掉
+    let downloadLink: string = client.getFileDownloadLink(path);
+    let url = downloadLink.indexOf('@') != -1 ? downloadLink.split('@')[0].split('//')[0] + '//' + downloadLink.split('@')[1] : downloadLink
+
+    function get_auth(): {} {
+        if (downloadLink.indexOf('@') != -1) {
+            const username = downloadLink.split('@')[0].split('//')[1].split(':')[0]
+            const password = downloadLink.split('@')[0].split('//')[1].split(':')[1]
+            debugger
+            return {
+                'Authorization': 'Basic ' + btoa(username + ":" + password)
+            }
+        }
+        return {}
+    }
+    const response = await fetch(url, {
+        method: "GET",
+        cache: "no-store",
+        headers: {
+            "Content-Type": "text/plain",
+            ...get_auth()
+        }
+    });
+    const res = await response.text();
+    return res;
+}
+
 export async function get_m3u8_tree({ path, blacklist = ['System Volume Information'], refresh = false }: {
     path: string, blacklist?: Array<string>, refresh?: boolean
 }) {
@@ -31,7 +60,10 @@ export async function get_m3u8_tree({ path, blacklist = ['System Volume Informat
     if (refresh == true && regex_data_files) {
         await data_files_act({ regex_data_files: regex_data_files, mode: 'addUser' })//函数里面用了一个补丁
     }
-    const text: string = await client.getFileContents(path, { format: "text" });
+    // const text: string = await client.getFileContents(path, { format: "text" });
+    const text: string = await get_file(path)
+
+
     let children: any = text.split('\n').filter((i) => i != '')
     children = children.map((i) => ({ 'filename': merger_path(path, i.trim(), 'file'), 'type': 'file' }))
     children = children.filter((i: any) => blacklist.indexOf(i.filename.split('/').at(-1)) == -1)
