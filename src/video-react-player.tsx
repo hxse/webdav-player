@@ -69,16 +69,18 @@ function onDown({ tree, tree2, videoIdx }: any) {
     }
 }
 
+export const regex1 = /(\/91porn)\/data_files\/(.*)\/(.*mp4)/
+export const regex2 = /(\/91porn)\/user_playlist\/(.*m3u8)/
 
-async function onAddOrRemoveUser({ tree, tree2, videoIdx, mode, setTree, setTree2 }: any) {
+export async function onAddOrRemoveUser({ tree, tree2, videoIdx, mode, setTree, setTree2 }: any) {
     tree = tree2 == null ? tree : tree2
     setTree = tree2 == null ? setTree : setTree2
     console.log(videoIdx, tree, tree2)
     let number = videoIdx == null ? null : findItem(tree.children, videoIdx)
     let item = number == null ? null : tree.children[number]
     if (item?.type == 'file') {
-        const regex_data_files = item.name.match(/(\/91porn)\/data_files\/(.*)\/(.*mp4)/)
-        const regex_data_files2 = item.name.match(/(\/91porn)\/user_playlist\/(.*m3u8)/)
+        const regex_data_files = item.name.match(regex1)
+        const regex_data_files2 = item.name.match(regex2)
         switch (true) {
             case regex_data_files != null:
                 //todo 这个地方很麻烦, 还是用配置文件去定义吧
@@ -133,7 +135,7 @@ async function onSwitchUser({ tree, videoIdx, setTree, setVideoIdx, backWardRef,
                     case 'video':
                         return {
                             dirPath: '/91porn/videos.m3u8',
-                            newTree: await get_m3u8_tree('/91porn/videos.m3u8')
+                            newTree: await get_m3u8_tree({ path: '/91porn/videos.m3u8' })
                         }
                 }
             }

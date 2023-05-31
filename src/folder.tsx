@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { get_tree, get_children, client } from './App'
 import { formatTranslation } from './App'
+import { regex2 } from './video-react-player';
+import { data_files_act } from './act';
 
 export function create_url(path: string) {
     let downloadLink = client.getFileDownloadLink(path);
@@ -22,7 +24,13 @@ function merger_path(path: string, relativePath: string, mode = 'file') {
     return res.join('/')
 }
 
-export async function get_m3u8_tree(path: string, blacklist: Array<string> = ['System Volume Information']) {
+export async function get_m3u8_tree({ path, blacklist = ['System Volume Information'], refresh = false }: {
+    path: string, blacklist?: Array<string>, refresh?: boolean
+}) {
+    if (refresh == true) {
+        const regex_data_files = path.match(regex2)
+        await data_files_act({ regex_data_files: regex_data_files, mode: 'addUser' })//函数里面用了一个补丁
+    }
     const text: string = await client.getFileContents(path, { format: "text" });
     let children: any = text.split('\n').filter((i) => i != '')
     children = children.map((i) => ({ 'filename': merger_path(path, i.trim(), 'file'), 'type': 'file' }))
@@ -50,7 +58,7 @@ async function onclick(path: string, type: string, setTree: any, setUrl: any, se
     }
     if (type == 'file') {
         if (path.split('.').at(-1) == 'm3u8') {
-            let tree = await get_m3u8_tree(path)
+            let tree = await get_m3u8_tree({ path: path, refresh: true })
             setTree(tree)
             setVideoIdx(null)
             setColorIdx(null)

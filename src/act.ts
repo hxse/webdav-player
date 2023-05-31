@@ -16,13 +16,20 @@ function cleanData(text: string, res: string, blacklist: Array<string> = []) {
 }
 
 export async function data_files_act({ regex_data_files, mode, item, tree, setTree }: any) {
-    const userPlaylistPath = regex_data_files[1] + '/' + 'user_playlist' + '/' + regex_data_files[2] + '.m3u8'
+    let userPlaylistPath = regex_data_files[1] + '/' + 'user_playlist' + '/' + regex_data_files[2] + '.m3u8'
     const videoPlaylistPath = regex_data_files[1] + '/' + 'videos.m3u8'
     // let downloadLink = client.getFileDownloadLink(p);
     switch (mode) {
         case 'addUser':
+            let path: string
+            if (regex_data_files[2].endsWith('.m3u8')) {//打补丁,为了在点击m3u8播放列表时自动刷新
+                path = regex_data_files[1] + '/' + 'data_files' + '/' + regex_data_files[2].split('.')[0]
+                userPlaylistPath = regex_data_files[1] + '/' + 'user_playlist' + '/' + regex_data_files[2]
+            } else {
+                path = regex_data_files[1] + '/' + 'data_files' + '/' + regex_data_files[2]
+            }
             async function get_dir() {
-                const dir: any = await client.getDirectoryContents(regex_data_files[1] + '/' + 'data_files' + '/' + regex_data_files[2]);
+                const dir: any = await client.getDirectoryContents(path);
                 const res = dir.map((i: any) => i.filename.replace('/91porn', '..') + '\n').join('\n')
                 return res
             }
@@ -57,7 +64,7 @@ export async function data_files_act({ regex_data_files, mode, item, tree, setTr
         case 'refresh':
             if (tree.type == 'directory') {
                 if (tree.name.endsWith('.m3u8')) {
-                    const newTree = await get_m3u8_tree(tree.name)
+                    const newTree = await get_m3u8_tree({ path: tree.name })
                     setTree(newTree)
                 } else {
                     const newTree = await get_children(tree.name)
@@ -78,15 +85,6 @@ export async function user_playlist_act({ regex_data_files, mode, item, tree, se
     // let downloadLink = client.getFileDownloadLink(p);
     switch (mode) {
         case 'addUser':
-            async function get_dir() {
-                const dir: any = await client.getDirectoryContents(videoDataPath);
-                const res = dir.map((i: any) => i.filename.replace('/91porn', '..') + '\n').join('\n')
-                return res
-            }
-            const res = await get_dir()
-            // const text = await client.getFileContents(userPlaylistPath, { format: "text" });
-            // await client.putFileContents(userPlaylistPath, cleanData(text, res));
-
             break
     }
 }
