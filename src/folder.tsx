@@ -34,7 +34,6 @@ async function get_file(path: string): Promise<string> {
         if (downloadLink.indexOf('@') != -1) {
             const username = downloadLink.split('@')[0].split('//')[1].split(':')[0]
             const password = downloadLink.split('@')[0].split('//')[1].split(':')[1]
-            debugger
             return {
                 'Authorization': 'Basic ' + btoa(username + ":" + password)
             }
