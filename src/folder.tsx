@@ -27,8 +27,8 @@ function merger_path(path: string, relativePath: string, mode = 'file') {
 export async function get_m3u8_tree({ path, blacklist = ['System Volume Information'], refresh = false }: {
     path: string, blacklist?: Array<string>, refresh?: boolean
 }) {
-    if (refresh == true) {
-        const regex_data_files = path.match(regex2)
+    const regex_data_files = path.match(regex2)
+    if (refresh == true && regex_data_files) {
         await data_files_act({ regex_data_files: regex_data_files, mode: 'addUser' })//函数里面用了一个补丁
     }
     const text: string = await client.getFileContents(path, { format: "text" });
