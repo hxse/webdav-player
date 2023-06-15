@@ -102,6 +102,7 @@ function App() {
   const [videoIdx, setVideoIdx] = useState<number | null>(null)
   const [count, setCount] = useState<number | null>(null)
   const [videoCount, setVideoCount] = useState<number | null>(null)
+  const [userName, setUserName] = useState<string>('')
   const [url, setUrl] = useState<string>('')
   const [tree, setTree] = useState<object>({})
   const [tree2, setTree2] = useState<object | null>(null)
@@ -131,10 +132,11 @@ function App() {
           videoIdx: {videoIdx} &nbsp;
           count: {count} &nbsp;
           videoCount: {videoCount} &nbsp;
+          userName: {url && url != 'error' ? decodeURI(url).split('/').at(-2) : ''} &nbsp;
         </div>
       </div >
       <div>
-        <Folder tree={tree} setTree={setTree} tree2={tree2} setTree2={setTree2} setUrl={setUrl} setIdx={setIdx} setVideoIdx={setVideoIdx} colorIdx={colorIdx} setColorIdx={setColorIdx} setCount={setCount} setVideoCount={setVideoCount} autoClick={autoClick} setAutoClick={setAutoClick} />
+        <Folder tree={tree} setTree={setTree} tree2={tree2} setTree2={setTree2} setUrl={setUrl} setIdx={setIdx} setVideoIdx={setVideoIdx} colorIdx={colorIdx} setColorIdx={setColorIdx} setCount={setCount} setVideoCount={setVideoCount} autoClick={autoClick} setAutoClick={setAutoClick} setUserName={setUserName} />
       </div>
       <br />
       {

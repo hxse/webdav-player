@@ -74,7 +74,7 @@ export async function get_m3u8_tree({ path, blacklist = ['System Volume Informat
 }
 
 
-async function onclick(path: string, type: string, setTree: any, setUrl: any, setIdx: any, setVideoIdx: any, idx: number | null, setColorIdx: any, vdx: number | null, setCount: any, setVideoCount: any, setTree2: any) {
+async function onclick({ path, type, setTree, setUrl, setIdx, setVideoIdx, idx, setColorIdx, vdx, setCount, setVideoCount, setTree2, setUserName }: any) {
     if (type == 'root') {
         setVideoIdx(null)
         setColorIdx(null)
@@ -110,9 +110,9 @@ async function onclick(path: string, type: string, setTree: any, setUrl: any, se
     setIdx(idx)
     console.log('folder click')
 }
-function Create_tree({ tree, setTree, setUrl, setIdx, setVideoIdx, setColorIdx, setCount, setVideoCount, colorIdx, myref }: any) {
+function Create_tree({ tree, setTree, setTree2, setUrl, setIdx, setVideoIdx, setColorIdx, setCount, setVideoCount, colorIdx, myref, setUserName }: any) {
     return tree?.children?.map((i: any, idx: number) => (
-        <div key={idx} ref={(r) => myref.current[idx] = r} onClick={() => onclick(i.name, i.type, setTree, setUrl, setIdx, setVideoIdx, idx, setColorIdx, i.vdx, setCount, setVideoCount)}
+        <div key={idx} ref={(r) => myref.current[idx] = r} onClick={() => onclick({ path: i.name, type: i.type, setTree, setUrl, setIdx, setVideoIdx, idx, setColorIdx, vdx: i.vdx, setCount, setVideoCount, setTree2, setUserName })}
             style={{
                 "backgroundColor": idx == colorIdx ? "rgba(228, 228, 236, 0.5)" : "",
                 // "boxShadow": "0 0 5px #333"
@@ -123,7 +123,7 @@ function Create_tree({ tree, setTree, setUrl, setIdx, setVideoIdx, setColorIdx, 
         </div>
     ))
 }
-export function Folder({ tree, setTree, tree2, setTree2, setUrl, setIdx, setVideoIdx, colorIdx, setColorIdx, setCount, setVideoCount, autoClick, setAutoClick }: any) {
+export function Folder({ tree, setTree, tree2, setTree2, setUrl, setIdx, setVideoIdx, colorIdx, setColorIdx, setCount, setVideoCount, autoClick, setAutoClick, setUserName }: any) {
     const ref = useRef([]);
     console.log('folder')
     const _ = tree2 == null ? tree?.name?.split('/') : tree2?.name?.split('/')
@@ -140,10 +140,10 @@ export function Folder({ tree, setTree, tree2, setTree2, setUrl, setIdx, setVide
         {tree2 == null ?
             (
                 <div>
-                    <div onClick={() => onclick(parentPath, 'directory', setTree, setUrl, setIdx, setVideoIdx, null, setColorIdx, null, setCount, setVideoCount, setTree2)}>
+                    <div onClick={() => onclick({ path: parentPath, type: 'directory', setTree, setUrl, setIdx, setVideoIdx, idx: null, setColorIdx, vdx: null, setCount, setVideoCount, setTree2, setUserName })}>
                         {tree.name || '/'}
                     </div>
-                    <Create_tree tree={tree} setTree={setTree} setUrl={setUrl} setIdx={setIdx} setVideoIdx={setVideoIdx} setColorIdx={setColorIdx} setCount={setCount} setVideoCount={setVideoCount} colorIdx={colorIdx} myref={ref} ></Create_tree>
+                    <Create_tree tree={tree} setTree={setTree} setTree2={setTree2} setUrl={setUrl} setIdx={setIdx} setVideoIdx={setVideoIdx} setColorIdx={setColorIdx} setCount={setCount} setVideoCount={setVideoCount} colorIdx={colorIdx} myref={ref} setUserName={setUserName} ></Create_tree>
                 </div>
             )
             :
@@ -153,7 +153,7 @@ export function Folder({ tree, setTree, tree2, setTree2, setUrl, setIdx, setVide
                     {tree2.name || '/'}
                     </div> */}
                     <div>children page...{tree2.name.split('/').at(-1)}</div>
-                    <Create_tree tree={tree2} setTree={setTree} setUrl={setUrl} setIdx={setIdx} setVideoIdx={setVideoIdx} setColorIdx={setColorIdx} setCount={setCount} setVideoCount={setVideoCount} colorIdx={colorIdx} myref={ref} ></Create_tree>
+                    <Create_tree tree={tree2} setTree={setTree} setTree2={setTree2} setUrl={setUrl} setIdx={setIdx} setVideoIdx={setVideoIdx} setColorIdx={setColorIdx} setCount={setCount} setVideoCount={setVideoCount} colorIdx={colorIdx} myref={ref} setUserName={setUserName}></Create_tree>
                 </div>
             )
         }
