@@ -10,7 +10,8 @@ function unique(arr: Array<string>) {//列表去重
 }
 
 function cleanData(text: string, res: string, blacklist: Array<string> = []) {
-    let data: any = (unique((text + '\n' + res).split('\n'))).filter((i) => i.trim() != '')
+    let data: Array<string> = (text + '\n' + res).split('\n').map(i => i.trim()).filter((i) => i != '')
+    data = unique(data)
     data = data.filter((i: string) => blacklist.indexOf(i) == -1)
     return data.join('\n')
 }
