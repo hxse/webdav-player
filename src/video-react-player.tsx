@@ -226,17 +226,20 @@ async function onBackWard({ tree, videoIdx, setTree, setVideoIdx, backWardRef, t
 //     );
 // }
 
+
+
 export function VideoReactPlayer({ url, setUrl, tree, tree2, videoIdx, setIdx, setVideoIdx, setColorIdx, videoCount, autoClick, setAutoClick }: any) {
     const videoRef = useRef(null);
     const backWardRef = useRef(null);
     const [width, setWidth] = useState(0);
 
-    // 窗口大小调整逻辑
+    // 新增状态来跟踪视频加载错误
+    const [videoLoadError, setVideoLoadError] = useState(false);
+
+    // 窗口大小调整逻辑保持不变
     useLayoutEffect(() => {
         function handleResize() {
-            // 获取父容器的宽度，而不是整个文档的宽度
             const parentWidth = document.documentElement.clientWidth;
-            // 将视频宽度设置为父容器的 98%
             setWidth(parentWidth * 0.98);
         }
         window.addEventListener('resize', handleResize);
@@ -244,25 +247,56 @@ export function VideoReactPlayer({ url, setUrl, tree, tree2, videoIdx, setIdx, s
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // 关键：当 url 变化时，重置错误状态
+    useEffect(() => {
+        setVideoLoadError(false);
+    }, [url]);
+
+    // 视频错误处理函数
+    const handleVideoError = () => {
+        console.error("视频加载失败。可能是认证问题。");
+        setVideoLoadError(true);
+    };
+
     console.log('run VideoReactPlayer');
     console.log('url', url);
 
     return (
         <div className='video-player'>
-            <video
-                ref={videoRef}
-                src={url}
-                controls
-                autoPlay
-                style={{
-                    width: '100%', // 将宽度设置为 100%
-                    height: '100%', // 高度按比例自适应
-                    // maxWidth: width + 'px' // 设置最大宽度
-                    objectFit: 'contain'
-                }}
-            />
+            {videoLoadError ? (
+                // 如果视频加载失败，显示认证提示
+                <div style={{ textAlign: 'center', padding: '50px' }}>
+                    <h2>视频无法播放</h2>
+                    <p>视频可能需要登录才能访问。请点击以下链接进行认证：</p>
+                    <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ fontSize: '1.2em', textDecoration: 'none', color: '#007BFF', fontWeight: 'bold' }}>
+                        点击这里登录 WebDAV
+                    </a>
+                    <p>登录后，请返回并刷新页面。</p>
+                </div>
+            ) : (
+                // 否则，正常渲染视频播放器
+                <video
+                    ref={videoRef}
+                    src={url}
+                    controls
+                    autoPlay
+                    // 添加 onError 事件监听器
+                    onError={handleVideoError}
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        maxWidth: width + 'px',
+                        objectFit: 'contain'
+                    }}
+                />
+            )}
 
             <div className="float">
+                {/* 你的按钮部分保持不变 */}
                 <button id="prev" className='float-button' onClick={() => onClick({ mode: 'prev', tree, tree2, videoIdx, setIdx, setUrl, setVideoIdx, setColorIdx, ref: videoRef, setAutoClick })}>
                     prev{videoIdx == null || videoCount == null ? '' : videoIdx}
                 </button>

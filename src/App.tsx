@@ -3,8 +3,8 @@ import { AuthType, createClient } from "webdav";
 import { Folder } from './folder'
 import { VideoReactPlayer } from './video-react-player';
 
-
 const videoSuffix = ['.mp4', '.mov', '.MOV']
+
 
 export function checkVideoSuffix(path: string, type: string) {
   for (let i of videoSuffix) {
@@ -30,6 +30,8 @@ function changeURLArg(url: string, arg: string, arg_val: string) {
     }
   }
 }
+
+
 // 示例url,搭建一个8085端口的webdav,挂载到/e目录
 // http://127.0.0.1:3000/?apiUrl=http://192.168.1.102:8085&&username=user&&password=asdf&path=e,f&num=0
 const queryParameters = new URLSearchParams(window.location.search)
@@ -38,6 +40,7 @@ const username = queryParameters.get("username")
 const password = queryParameters.get("password")
 const path = queryParameters.get("path")
 const num = queryParameters.get("num")
+
 
 let _p = path?.split(',')[num == null ? 0 : parseInt(num)]
 _p = _p == "" ? _p : "/" + _p
@@ -113,6 +116,7 @@ function App() {
   const [tree2, setTree2] = useState<object | null>(null)
   const [colorIdx, setColorIdx] = useState<number | null>(null)
   const [autoClick, setAutoClick] = useState<number | null>(null)
+
   useEffect(() => {
     async function run_tree() {
       const tree = await get_children('/')
