@@ -1,3 +1,42 @@
+/* File: src\index.css */
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  height: 100%;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.video-container {
+  flex-grow: 1;
+  /* 关键：让视频容器自动扩展以填充所有可用空间 */
+  /* 添加 display: flex */
+  display: flex;
+  /* 新增：让视频居中显示在容器内 */
+  align-items: center;
+  justify-content: center;
+  /* 新增：设置最小高度以确保Flexbox生效 */
+  min-height: 0;
+  margin-top: 35px;
+}
+
+.video-player {
+  /* 视频容器也需要使用Flexbox或完全填充其父容器 */
+  position: relative;
+  /* 为浮动按钮提供定位参考 */
+  width: 100%;
+  height: 100%;
+}
+
 .folder {
   font-size: medium;
   height: 28vh;
@@ -5,23 +44,14 @@
   overflow: auto;
   border-style: solid;
   border-width: medium;
-
 }
-
 
 .float {
   position: absolute;
-  top: -35px;
-  /* height: 90px;
-  width: 40px;
-  bottom: 90px;
-  right: 50px; */
-  /* background: #b4d145; */
-  /* top: 500px; */
+  top: -30px;
 }
 
 .float-button {
-  /* height: 30px; */
   font-size: large;
 }
 

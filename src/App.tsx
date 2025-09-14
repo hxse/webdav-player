@@ -15,7 +15,7 @@ export function checkVideoSuffix(path: string, type: string) {
   return false
 }
 
-function changeURLArg(url, arg, arg_val) {
+function changeURLArg(url: string, arg: string, arg_val: string) {
   var pattern = arg + '=([^&]*)';
   var replaceText = arg + '=' + arg_val;
   if (url.match(pattern)) {
@@ -39,11 +39,16 @@ const password = queryParameters.get("password")
 const path = queryParameters.get("path")
 const num = queryParameters.get("num")
 
-export const client = createClient(apiUrl + '/' + path?.split(',')[num == null ? 0 : parseInt(num)], {
+let _p = path?.split(',')[num == null ? 0 : parseInt(num)]
+_p = _p == "" ? _p : "/" + _p
+export const client = createClient(apiUrl + _p, {
   authType: AuthType.Password,
   username: username,
   password: password
 });
+console.log('apiUrl', apiUrl)
+
+
 export function formatTranslation(children: any) {
   children = children.map((i: any) => ({ 'name': i.filename, 'type': i.type }))
   let vdx = 0
@@ -118,7 +123,7 @@ function App() {
   }, [])
   console.log('run App')
   return (
-    <div>
+    <div className="app-container">
       <div>
         <div style={{ "whiteSpace": "nowrap" }}>
           {path?.split(',').map((i, idx) =>
@@ -138,10 +143,9 @@ function App() {
       <div>
         <Folder tree={tree} setTree={setTree} tree2={tree2} setTree2={setTree2} setUrl={setUrl} setIdx={setIdx} setVideoIdx={setVideoIdx} colorIdx={colorIdx} setColorIdx={setColorIdx} setCount={setCount} setVideoCount={setVideoCount} autoClick={autoClick} setAutoClick={setAutoClick} setUserName={setUserName} />
       </div>
-      <br />
       {
         !url ? undefined : url == 'error' ? <h1>'play video error'</h1> :
-          <div
+          <div className="video-container"
           >
             <VideoReactPlayer url={url} setUrl={setUrl} tree={tree} setTree={setTree} tree2={tree2} setTree2={setTree2} setIdx={setIdx} setVideoIdx={setVideoIdx} videoIdx={videoIdx} setColorIdx={setColorIdx} count={count} videoCount={videoCount} autoClick={autoClick} setAutoClick={setAutoClick} />
           </div>

@@ -1,5 +1,4 @@
-import 'video-react/dist/video-react.css'; // import css
-import { Player, ControlBar, Shortcut, BigPlayButton } from 'video-react';
+import ReactPlayer from 'react-player';
 import { useRef, useEffect, useLayoutEffect, useState } from 'react';
 import { create_url } from './folder'
 import { shortcuts } from './config';
@@ -166,54 +165,119 @@ async function onBackWard({ tree, videoIdx, setTree, setVideoIdx, backWardRef, t
     }
 }
 
-export function VideoReactPlayer({ url, setUrl, tree, setTree, tree2, setTree2, videoIdx, setIdx, setVideoIdx, setColorIdx, count, videoCount, autoClick, setAutoClick }: any) {
-    const ref = useRef();
-    const backWardRef = useRef();
-    const [width, setWidth] = useState(0);
-    const [height, setHeight] = useState(0);
-    console.log('run VideoReactPlayer', ref == undefined)
-    useEffect(() => {
-        console.log(ref)
-        if (videoIdx != null) {
-            ref.current.load()
-        }
-    }, [url])
 
+// export function VideoReactPlayer({ url, setUrl, tree, setTree, tree2, setTree2, videoIdx, setIdx, setVideoIdx, setColorIdx, count, videoCount, autoClick, setAutoClick }: any) {
+//     const playerRef = useRef(null);
+//     const backWardRef = useRef(null);
+//     const [width, setWidth] = useState(0);
+//     const [playing, setPlaying] = useState(true); // 控制播放状态
+//     const [volume, setVolume] = useState(0.8); // 控制音量
+
+//     // 播放器加载逻辑
+//     useEffect(() => {
+//         // 播放器加载逻辑在 ReactPlayer 中由 url prop 自动处理
+//         // 当 url 改变时，ReactPlayer 会自动加载新视频
+//     }, [url]);
+
+//     // 窗口大小调整逻辑
+//     useLayoutEffect(() => {
+//         function handleResize() {
+//             setWidth(document.documentElement.clientWidth * 0.98);
+//         }
+//         window.addEventListener('resize', handleResize);
+//         handleResize();
+//         return () => window.removeEventListener('resize', handleResize);
+//     }, []);
+
+//     console.log('run VideoReactPlayer', playerRef == null);
+//     console.log('url', url);
+
+//     return (
+//         <div className='video-player'>
+//             <ReactPlayer
+//                 ref={playerRef}
+//                 // url={url}
+//                 url="http://hxse:asdf@192.168.10.110:3923/91porn/data_files/122417/2021-08-22%20%E5%BE%88%E5%B0%8F%E7%9A%84%E5%A6%B9%E5%A6%B9%20e13298342353c3953486.mp4"
+//                 playing={playing}
+//                 controls={true} // 启用默认的播放器控制条
+//                 width={width + 'px'}
+//                 height='auto'
+//                 volume={volume}
+//                 // 当视频加载完成或URL改变时自动播放
+//                 onReady={() => console.log('Player ready')}
+//             // 你可以根据需要添加更多事件处理函数
+//             // onPlay={() => setPlaying(true)}
+//             // onPause={() => setPlaying(false)}
+//             />
+
+//             <div className="float" >
+//                 <button id="prev" className='float-button' onClick={() => onClick({ mode: 'prev', tree, tree2, videoIdx, setIdx, setUrl, setVideoIdx, setColorIdx, ref: playerRef, setAutoClick })}>prev{videoIdx == null || videoCount == null ? '' : videoIdx}</button>
+//                 <button id="next" className='float-button' onClick={() => onClick({ mode: 'next', tree, tree2, videoIdx, setIdx, setUrl, setVideoIdx, setColorIdx, ref: playerRef, setAutoClick })}>next{videoIdx == null || videoCount == null ? '' : videoCount - videoIdx - 1}</button>
+//                 <button id="like" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'likeVideo' })}>like</button>
+//                 <button id="down" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'downVideo' })}>down</button>
+//                 <button id="switchVideo" className='float-button' onClick={() => onSwitchUser({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick, mode: 'video' })}>switchVideo</button>
+//                 <button id="addUser" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'addUser' })}>addUser</button>
+//                 <button id="removeUser" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'removeUser' })}>removeUser</button>
+//                 <button id="switchUser" className='float-button' onClick={() => onSwitchUser({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick, mode: 'user' })}>switchUser</button>
+//                 <button id="backWard" className='float-button' onClick={() => onBackWard({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick })}>backWard</button>
+//                 <button id="refresh" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'refresh', setTree, setTree2 })}>refresh</button>
+//             </div>
+//         </div>
+//     );
+// }
+
+export function VideoReactPlayer({ url, setUrl, tree, tree2, videoIdx, setIdx, setVideoIdx, setColorIdx, videoCount, autoClick, setAutoClick }: any) {
+    const videoRef = useRef(null);
+    const backWardRef = useRef(null);
+    const [width, setWidth] = useState(0);
+
+    // 窗口大小调整逻辑
     useLayoutEffect(() => {
         function handleResize() {
-            setWidth(document.documentElement.clientWidth * 0.98)
-            setHeight(document.documentElement.clientHeight * 0.6)
+            // 获取父容器的宽度，而不是整个文档的宽度
+            const parentWidth = document.documentElement.clientWidth;
+            // 将视频宽度设置为父容器的 98%
+            setWidth(parentWidth * 0.98);
         }
-        window.addEventListener('resize', handleResize)
-        console.log('set handleResize')
-        handleResize()
-    }, [])
+        window.addEventListener('resize', handleResize);
+        handleResize();
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
-    console.log('全屏', document.documentElement.clientHeight)
+    console.log('run VideoReactPlayer');
+    console.log('url', url);
+
     return (
         <div className='video-player'>
-            <Player ref={ref} autoPlay={true} playsInline={false} width={width} height={height} fluid={false} >
-                <source src={url} />
+            <video
+                ref={videoRef}
+                src={url}
+                controls
+                autoPlay
+                style={{
+                    width: '100%', // 将宽度设置为 100%
+                    height: '100%', // 高度按比例自适应
+                    // maxWidth: width + 'px' // 设置最大宽度
+                    objectFit: 'contain'
+                }}
+            />
 
-                <ControlBar autohide={false}>
-                    <div className="float" >
-                        <button id="prev" className='float-button' onClick={() => onClick({ mode: 'prev', tree, tree2, videoIdx, setIdx, setUrl, setVideoIdx, setColorIdx, ref, setAutoClick })}>prev{videoIdx == null || videoCount == null ? '' : videoIdx}</button>
-                        <button id="next" className='float-button' onClick={() => onClick({ mode: 'next', tree, tree2, videoIdx, setIdx, setUrl, setVideoIdx, setColorIdx, ref, setAutoClick })}>next{videoIdx == null || videoCount == null ? '' : videoCount - videoIdx - 1}</button>
-                        <button id="like" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'likeVideo' })}>like</button>
-                        <button id="down" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'downVideo' })}>down</button>
-                        <button id="switchVideo" className='float-button' onClick={() => onSwitchUser({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick, mode: 'video' })}>switchVideo</button>
-                        <button id="addUser" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'addUser' })}>addUser</button>
-                        <button id="removeUser" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'removeUser' })}>removeUser</button>
-                        <button id="switchUser" className='float-button' onClick={() => onSwitchUser({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick, mode: 'user' })}>switchUser</button>
-                        <button id="backWard" className='float-button' onClick={() => onBackWard({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick })}>backWard</button>
-                        <button id="refresh" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'refresh', setTree, setTree2 })}>refresh</button>
-                    </div>
-                </ControlBar>
-
-                <Shortcut clickable={false} dblclickable={false} shortcuts={shortcuts} />
-                <BigPlayButton disabled position="center" />
-            </Player >
-        </div >
-    )
+            <div className="float">
+                <button id="prev" className='float-button' onClick={() => onClick({ mode: 'prev', tree, tree2, videoIdx, setIdx, setUrl, setVideoIdx, setColorIdx, ref: videoRef, setAutoClick })}>
+                    prev{videoIdx == null || videoCount == null ? '' : videoIdx}
+                </button>
+                <button id="next" className='float-button' onClick={() => onClick({ mode: 'next', tree, tree2, videoIdx, setIdx, setUrl, setVideoIdx, setColorIdx, ref: videoRef, setAutoClick })}>
+                    next{videoIdx == null || videoCount == null ? '' : videoCount - videoIdx - 1}
+                </button>
+                <button id="like" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'likeVideo' })}>like</button>
+                <button id="down" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'downVideo' })}>down</button>
+                <button id="switchVideo" className='float-button' onClick={() => onSwitchUser({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick, mode: 'video' })}>switchVideo</button>
+                <button id="addUser" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'addUser' })}>addUser</button>
+                <button id="removeUser" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'removeUser' })}>removeUser</button>
+                <button id="switchUser" className='float-button' onClick={() => onSwitchUser({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick, mode: 'user' })}>switchUser</button>
+                <button id="backWard" className='float-button' onClick={() => onBackWard({ tree, tree2, setTree, setTree2, videoIdx, setVideoIdx, backWardRef, autoClick, setAutoClick })}>backWard</button>
+                <button id="refresh" className='float-button' onClick={() => onAddOrRemoveUser({ tree, tree2, videoIdx, mode: 'refresh', setTree, setTree2 })}>refresh</button>
+            </div>
+        </div>
+    );
 }
-
